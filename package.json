@@ -1,0 +1,29 @@
+{
+  "name": "rf-cascade",
+  "version": "0.1.0",
+  "description": "RF Cascade Analysis",
+  "main": "main.js",
+  "repository": "https://github.com/markbailly72/rf-cascade.git",
+  "author": "Mark Bailly",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "electron": "^7.0.1",
+    "electron-builder": "^22.1.0"
+  },
+  "dependencies": {
+    "draw2d": "^1.0.19"
+  },
+  "build": {
+    "appId": "s2pQuickPlot",
+    "productName":"RF Cascade",
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "scripts": {
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "start":"electron ."
+  }
+}

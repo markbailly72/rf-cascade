@@ -1,0 +1,260 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <title></title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- <link type="text/css" rel="stylesheet" href="./css/application.css" />
+  <link type="text/css" rel="stylesheet" href="./css/jquery-ui.css" />
+  <link type="text/css" rel="stylesheet" href="./css/bootstrap.css" /> -->
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script>if (window.module) module = window.module;</script>
+  <style>
+  .draw2d_InputPort{
+    fill:#F7F7F7;
+    stroke:#d7d7d7;
+  }
+  .draw2d_OutputPort{
+    fill:#F7F7F7;
+    stroke:#d7d7d7;
+  }
+  </style>
+</head>
+<body>
+  <div  class="container">
+    <ul class="nav nav-tabs" id="rfhTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="schematic-tab" data-toggle="tab" href="#schematic" role="tab" aria-controls="schematic" aria-selected="true">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="plot-tab" data-toggle="tab" href="#plot" role="tab" aria-controls="plot" aria-selected="false">Plot</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="powerSweep-tab" data-toggle="tab" href="#powerSweep" role="tab" aria-controls="powerSweep" aria-selected="false">Power Sweep</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="loadSaveFile-tab" data-toggle="tab" href="#loadSaveFile" role="tab" aria-controls="loadSaveFile" aria-selected="false">File</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="help-tab" data-toggle="tab" href="#help" role="tab" aria-controls="help" aria-selected="false">Help</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane show active" id="schematic" role="tabpanel" aria-labelledby="schematic-tab">
+        <h4>Schematic</h4>
+        <div id="schematic-container">
+          <div id="side-nav" >
+            <div id="layer_header" class="highlight panetitle blackgradient">
+              <div data-shape="GenericBlock"  class="palette_node_element draw2d_droppable" title="drag&amp;drop the element into the schematic..">Element</div>
+              <div data-shape="Amplifier"  class="palette_node_element draw2d_droppable" title="drag&amp;drop the element into the schematic..">Amp</div>
+            </div>
+            <button type="button" id="rfhButtonOpenFile" class="btn btn-default" aria-label="Open File" style="float:left">
+              <span class="glyphicon glyphicon-folder-open" aria-hidden="false"></span>
+            </button>
+            <button type="button" id="rfhButtonSaveFile" class="btn btn-default" aria-label="Save File" style="float:left">
+              <span class="glyphicon glyphicon-floppy-disk" aria-hidden="false"></span>
+            </button>
+            <button type="button" id="rfhButtonMainSettings" class="btn btn-default" aria-label="Main Settings" style="float:left">
+            <span class="glyphicon glyphicon-cog" aria-hidden="false"></span>
+             </button>
+          </div>
+          <div id="canvas" >
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane" id="plot" role="tabpanel" aria-labelledby="plot-tab">
+        <h4>Results</h4>
+        <div>
+          <!-- <button type="button" id="rfhButtonPlotSettings" class="btn btn-default" aria-label="Plot Settings" style="float:left">
+            <span class="glyphicon glyphicon-cog" aria-hidden="false"></span>
+          </button> -->
+          <select id="plotTypeSelect" class="form-control" style="float:left">
+            <option value="op1db" selected="selected">Output P1dB</option>
+            <option value="ip1db">Input P1dB</option>
+            <option value="nf">Noise Figure</option>
+            <option value="oip3">Output IP3</option>
+            <option value="iip3">Input IP3</option>
+          </select>
+          <!-- <button type="button" id="rfhButtonFreezePlot" class="btn btn-default" aria-label="Freeze Plot" style="float:left"><span class="glyphicon glyphicon-pushpin" aria-hidden="false"></span></button> -->
+        </div>
+        <div id="dataPlotDiv" style="float:left"></div>
+      </div>
+      <div class="tab-pane" id="powerSweep" role="tabpanel" aria-labelledby="powerSweep-tab">
+        <h3>Cascade Power</h3>
+        <p>
+            <button type="button" id="rfhButtonPowerSweep" class="btn btn-success">Power Sweep</button>
+          </p>
+          <div id="powerSweepDataDiv"></div>
+      </div>
+      <div class="tab-pane" id="loadSaveFile" role="tabpanel" aria-labelledby="loadSaveFile-tab">
+        <h3>File</h3>
+        <div>
+          <textarea id="jsonText" rows="25" cols="100" style="float:left"></textarea>
+        </div>
+      </div>
+      <div class="tab-pane" id="help" role="tabpanel" aria-labelledby="help-tab">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="card-title">Help</h3>
+            <h4 class="card-subtitle">Schematic</h4>
+            <p class="card-text">Drag your elements into the schematic.</p>
+            <p class="card-text">Double click an element to edit the parameters (Gain, Noise Figure....).</p>
+            <p class="card-text">Drag your elements between the input and output.</p>
+            <p class="card-text">Click on a node and drag the wire to connect elements.</p>
+            <p class="card-text">The results will update once the cascade is complete.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="plotSettingsModal" tabindex="-1" role="dialog" aria-labelledby="plotSettingsModal" aria-hidden="true" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 id="myModalLabel01" class="modal-title">Edit Plot Properties</h4>
+            <button type="button" data-dismiss="modal" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          </div>
+          <div class="modal-body">
+            <form id="pmtPlotSettingsForm">
+              <div class="input-group"><span class="input-group-addon device-edit-box">Plot Title</span>
+                <input type="text" id="plotTitleInput" value="Title" class="form-control form-control">
+              </div>
+              <div class="input-group"><span class="input-group-addon device-edit-box">Y Axis Label</span>
+                <input type="text" id="yAxisLabelInput" value="Y-axis" class="form-control form-control">
+              </div>
+              <div class="input-group"><span class="input-group-addon device-edit-box">X Axis Label</span>
+                <input type="text" id="xAxisLabelInput" value="X-axis" class="form-control form-control">
+              </div>
+              <div class="input-group"><span class="input-group-addon device-edit-box">Y Axis Minimum</span>
+                <input type="text" id="yAxisMinInput" data-pmt-validate-type="float" value="0" class="form-control form-control">
+              </div>
+              <div class="input-group"><span class="input-group-addon device-edit-box">Y Axis Maximum</span>
+                <input type="text" id="yAxisMaxInput" data-pmt-validate-type="float" value="50" class="form-control form-control">
+              </div>
+            </form>
+            <!-- <input type="text" id="plotPallete1" /> -->
+          </div>
+          <div class="modal-footer">
+            <div style="float:right">
+              <button id="pmtButtonPlotApply" type="button" class="btn btn-info">Apply</button>
+              <button type="button" data-dismiss="modal" class="btn btn-warning">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModal" aria-hidden="true" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel02">Main Settings</h4>
+            <button type="button" class="close" data-dismiss="modal"aria-label="Close"><span aria-hidden="true">×</span></button>
+          </div>
+          <div class="modal-body">
+            <form id="rfhSettingsForm" class="form-inline">
+              <div class="form-group"><label for="powerSettingsInput">Input Power (dBm)</label>
+                <input type="text" id="powerSettingsInput" data-rfh-validate-type="none" value="-50" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="freqSettingsInput">Center Frequency (MHz)</label>
+                <input type="text" id="freqSettingsInput" data-rfh-validate-type="float" value="1000" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="bandwidthSettingsInput">Bandwidth (MHz)</label>
+                <input type="text" id="bandwidthSettingsInput" data-rfh-validate-type="float" data-rfh-validate-value="0" value="100" class="form-control form-control-sm">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close
+            </button>
+            <button id="saveSettingsButton" type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="myModal02" tabindex="-1" role="dialog" aria-labelledby="myModalLabel02" aria-hidden="true" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 id="myModalLabel01" class="modal-title">Power Sweep</h4>
+            <button type="button" data-dismiss="modal" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+          </div>
+          <div class="modal-body">
+            <form id="pmtPowerSweepForm">
+              <div class="input-group"><span class="input-group-addon device-edit-box">Minimum Power (dBm)</span>
+                <input type="text" id="devicePowerSweepMin" data-pmt-validate-type="float" value="-10" class="form-control form-control">
+              </div>
+              <div class="input-group"><span class="input-group-addon device-edit-box">Maximum Power (dBm)</span>
+                <input type="text" id="devicePowerSweepMax" data-pmt-validate-type="float" value="10" class="form-control form-control">
+              </div>
+              <div class="input-group"><span class="input-group-addon device-edit-box">Step (dBm)</span>
+                <input type="text" id="devicePowerSweepStep" data-pmt-validate-type="float" data-pmt-validate-value="0" value="1" class="form-control form-control">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <p id="pmtErrorMessage2" class="errorMessage"></p>
+            </div>
+            <div style="float:right">
+              <button id="pmtButtonPowerSweepGo" type="button" class="btn btn-info">Sweep</button>
+              <button type="button" data-dismiss="modal" class="btn btn-warning">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="partPropsModal" tabindex="-1" role="dialog" aria-labelledby="partPropsModal" aria-hidden="true" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel03">Device Properties</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+          </div>
+          <div class="modal-body">
+            <form id="rfhDeviceForm" class="form-inline">
+              <div class="form-group"><label for="deviceNameInput">Name</label>
+                <input type="text" id="deviceNameInput" data-rfh-validate-type="none" value="Part" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="deviceGainInput">Gain (dB)</label>
+                <input type="text" id="deviceGainInput" data-rfh-validate-type="float" value="10" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="deviceNFInput">Noise Figure</label>
+                <input type="text" id="deviceNFInput" data-rfh-validate-type="float" data-rfh-validate-value="0" value="1" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="deviceP1Input">Output P1dB (dBm)</label>
+                <input type="text" id="deviceP1Input" data-rfh-validate-type="float" value="20" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="deviceIp3Input">Output IP3 (DBm)</label>
+                <input type="text" id="deviceIp3Input" data-rfh-validate-type="float" value="30" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="idevicePsatInput">Psat (dBm)</label>
+                <input type="text" id="devicePsatInput" data-rfh-validate-type="float" value="25" class="form-control form-control-sm">
+              </div>
+              <div class="form-group"><label for="devicePmaxInput">Input Pmax (dB)</label>
+                <input type="text" id="devicePmaxInput" data-rfh-validate-type="float" value="20" class="form-control form-control-sm">
+              </div>
+              <div class="form-group">
+                <input type="checkbox" id="disableDeviceCB"><label for="disableDeviceCB">Disable Component</label>
+                <div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="savePartPropsButton" type="button" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <script>require('./renderer.js')</script>
+        <!-- <script src="./app/InputPort.js"></script> -->
+      </body>
+      </html>
