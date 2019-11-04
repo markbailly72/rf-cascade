@@ -18,10 +18,22 @@ function createWindow () {
 //  mainWindow.setMenu(null);
   var menu = Menu.buildFromTemplate([
       {
-          label: "RF Cascade",
-          label: 'App',
+          label: 'RF Cascade',
           submenu: [
               {label:'Exit', click() {app.quit()}}
+          ]
+      },
+      {
+          label: 'File',
+          submenu: [
+            {
+              label: 'Open',
+              accelerator: 'CTRL+O'
+            },
+            {
+              label: 'Save',
+              accelerator: 'CTRL+S'
+            }
           ]
       }
   ])
@@ -35,7 +47,7 @@ function createWindow () {
 //  mainWindow.loadFile('splash.html');
 
   // Open the DevTools.
-//  mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {

@@ -1,12 +1,8 @@
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
-  <title></title>
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>RF Cascade App</title>
   <meta name="viewport" content="width=device-width, minimum-scale=1.0" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <!-- <link type="text/css" rel="stylesheet" href="./css/application.css" />
-  <link type="text/css" rel="stylesheet" href="./css/jquery-ui.css" />
-  <link type="text/css" rel="stylesheet" href="./css/bootstrap.css" /> -->
   <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
   <script src="./js/jquery-ui.min.js"></script>
@@ -33,26 +29,24 @@
     <div class="row">
         <h4>Schematic</h4>
     </div>
-    <div class="row">
+    <div class="row border border-primary">
         <div id="schematic-container">
           <div id="canvas" >
           </div>
         </div>
     </div>
-    <div class="row">
-      <div>
-        <div id="layer_header" class="highlight panetitle blackgradient">
-          <div data-shape="GenericBlock"  class="palette_node_element draw2d_droppable" title="drag&amp;drop the element into the schematic..">Element</div>
-        </div>
-      </div>
+    <div class="row border border-primary">
+      <div class="col-md-12"><h4>Parts Pallette</h4></div>
+      <div class="col-md-12" style="font-size:small">Drag part onto the schematic page.</div>
+      <div class="col-md-1">
+      <div data-shape="GenericBlock"  class="palette_node_element draw2d_droppable" title="drag&amp;drop the part onto the schematic..">Part</div>
     </div>
-      <div class="row">
+  </div>
+    <div class="row border border-primary">
+      <div class="col-md-12">
         <h4>Results</h4>
       </div>
-        <div class="row">
-          <!-- <button type="button" id="rfhButtonPlotSettings" class="btn btn-default" aria-label="Plot Settings" style="float:left">
-            <span class="glyphicon glyphicon-cog" aria-hidden="false"></span>
-          </button> -->
+        <div class="col-md-2">
           <select id="plotTypeSelect" class="form-control" style="float:left">
             <option value="op1db" selected="selected">Output P1dB</option>
             <option value="ip1db">Input P1dB</option>
@@ -60,47 +54,12 @@
             <option value="oip3">Output IP3</option>
             <option value="iip3">Input IP3</option>
           </select>
-          <!-- <button type="button" id="rfhButtonFreezePlot" class="btn btn-default" aria-label="Freeze Plot" style="float:left"><span class="glyphicon glyphicon-pushpin" aria-hidden="false"></span></button> -->
         </div>
-        <div id="dataPlotDiv" class="row"></div>
+        <div id="dataPlotDiv" class="col-md-12"></div>
       </div>
+  </div>
 
-    <div id="plotSettingsModal" tabindex="-1" role="dialog" aria-labelledby="plotSettingsModal" aria-hidden="true" class="modal fade">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 id="myModalLabel01" class="modal-title">Edit Plot Properties</h4>
-            <button type="button" data-dismiss="modal" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          </div>
-          <div class="modal-body">
-            <form id="pmtPlotSettingsForm">
-              <div class="input-group"><span class="input-group-addon device-edit-box">Plot Title</span>
-                <input type="text" id="plotTitleInput" value="Title" class="form-control form-control">
-              </div>
-              <div class="input-group"><span class="input-group-addon device-edit-box">Y Axis Label</span>
-                <input type="text" id="yAxisLabelInput" value="Y-axis" class="form-control form-control">
-              </div>
-              <div class="input-group"><span class="input-group-addon device-edit-box">X Axis Label</span>
-                <input type="text" id="xAxisLabelInput" value="X-axis" class="form-control form-control">
-              </div>
-              <div class="input-group"><span class="input-group-addon device-edit-box">Y Axis Minimum</span>
-                <input type="text" id="yAxisMinInput" data-pmt-validate-type="float" value="0" class="form-control form-control">
-              </div>
-              <div class="input-group"><span class="input-group-addon device-edit-box">Y Axis Maximum</span>
-                <input type="text" id="yAxisMaxInput" data-pmt-validate-type="float" value="50" class="form-control form-control">
-              </div>
-            </form>
-            <!-- <input type="text" id="plotPallete1" /> -->
-          </div>
-          <div class="modal-footer">
-            <div style="float:right">
-              <button id="pmtButtonPlotApply" type="button" class="btn btn-info">Apply</button>
-              <button type="button" data-dismiss="modal" class="btn btn-warning">Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+
 
     <div id="partPropsModal" tabindex="-1" role="dialog" aria-labelledby="partPropsModal" aria-hidden="true" class="modal fade">
       <div class="modal-dialog">
@@ -110,35 +69,61 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
           </div>
           <div class="modal-body">
-            <form id="rfhDeviceForm" class="form-inline">
-              <div class="form-group"><label for="deviceNameInput">Name</label>
-                <input type="text" id="deviceNameInput" data-rfh-validate-type="none" value="Part" class="form-control form-control-sm">
+            <form id="rfhDeviceForm">
+              <div class="form-group row">
+                <label for="deviceNameInput" class="col-sm-5 col-form-label">Name</label>
+                <div class="col-sm-3">
+                  <input type="text" id="deviceNameInput" data-rfh-validate-type="none" value="Part" class="form-control">
+                </div>
               </div>
-              <div class="form-group"><label for="deviceGainInput">Gain (dB)</label>
-                <input type="text" id="deviceGainInput" data-rfh-validate-type="float" value="10" class="form-control form-control-sm">
+              <div class="form-group row">
+                <label for="deviceGainInput" class="col-sm-5 col-form-label">Gain (dB)</label>
+                <div class="col-sm-3">
+                  <input type="text" id="deviceGainInput" data-rfh-validate-type="float" value="10" class="form-control">
+                </div>
               </div>
-              <div class="form-group"><label for="deviceNFInput">Noise Figure</label>
-                <input type="text" id="deviceNFInput" data-rfh-validate-type="float" data-rfh-validate-value="0" value="1" class="form-control form-control-sm">
+              <div class="form-group row">
+                <label for="deviceNFInput" class="col-sm-5 col-form-label">Noise Figure (dB)</label>
+                <div class="col-sm-3">
+                  <input type="text" id="deviceNFInput" data-rfh-validate-type="float" data-rfh-validate-value="0" value="1" class="form-control">
+                </div>
               </div>
-              <div class="form-group"><label for="deviceP1Input">Output P1dB (dBm)</label>
-                <input type="text" id="deviceP1Input" data-rfh-validate-type="float" value="20" class="form-control form-control-sm">
+              <div class="form-group row">
+                <label for="deviceP1Input" class="col-sm-5 col-form-label">Output P1dB (dBm)</label>
+                <div class="col-sm-3">
+                  <input type="text" id="deviceP1Input" data-rfh-validate-type="float" value="20" class="form-control">
+                </div>
               </div>
-              <div class="form-group"><label for="deviceIp3Input">Output IP3 (DBm)</label>
-                <input type="text" id="deviceIp3Input" data-rfh-validate-type="float" value="30" class="form-control form-control-sm">
+              <div class="form-group row">
+                <label for="deviceIp3Input" class="col-sm-5 col-form-label">Output IP3 (dBm)</label>
+                <div class="col-sm-3">
+                  <input type="text" id="deviceIp3Input" data-rfh-validate-type="float" value="30" class="form-control">
+                </div>
               </div>
-              <div class="form-group"><label for="idevicePsatInput">Psat (dBm)</label>
-                <input type="text" id="devicePsatInput" data-rfh-validate-type="float" value="25" class="form-control form-control-sm">
+              <div class="form-group row">
+                <label for="idevicePsatInput" class="col-sm-5 col-form-label">Psat (dBm)</label>
+                <div class="col-sm-3">
+                  <input type="text" id="devicePsatInput" data-rfh-validate-type="float" value="25" class="form-control">
+                </div>
               </div>
-              <div class="form-group"><label for="devicePmaxInput">Input Pmax (dB)</label>
-                <input type="text" id="devicePmaxInput" data-rfh-validate-type="float" value="20" class="form-control form-control-sm">
+              <div class="form-group row">
+                <label for="devicePmaxInput" class="col-sm-5 col-form-label">Input Pmax (dB)</label>
+                <div class="col-sm-3">
+                  <input type="text" id="devicePmaxInput" data-rfh-validate-type="float" value="20" class="form-control">
+                </div>
               </div>
-              <div class="form-group">
-                <input type="checkbox" id="disableDeviceCB"><label for="disableDeviceCB">Disable Component</label>
-                <div>
-                </form>
+              <div class="form-group row">
+                <div class="col-sm-8">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="disableDeviceCB">
+                    <label class="form-check-label" for="disableDeviceCB">Disable Component</label>
+                  </div>
+                </div>
+              </div>
+            </form>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button id="savePartPropsButton" type="button" class="btn btn-primary">Save changes</button>
               </div>
             </div>
@@ -146,9 +131,6 @@
         </div>
     </div>
   </div>
-
-
-        <script>require('./renderer.js')</script>
-
-      </body>
-      </html>
+  <script>require('./renderer.js')</script>
+</body>
+</html>

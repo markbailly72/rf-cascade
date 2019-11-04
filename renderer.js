@@ -84,7 +84,6 @@ document.addEventListener("DOMContentLoaded",function () {
            }
            //FIX clearPlot
            clearPlot();
-           console.log(connectionList);
          });
          connection.on('added', function(){
            connectionList.push(connection.getId()+","+connection.getSource().getParent().getId() + ","+connection.getTarget().getParent().getId());
@@ -106,20 +105,17 @@ document.addEventListener("DOMContentLoaded",function () {
 $('#savePartPropsButton').on('click',function () { validateInputs('rfhDeviceForm',function() {saveProperties()}) });
 $('#saveSettingsButton').on('click',function () {saveMainSettings()});
 $('#plotTypeSelect').on('change',function () {plotData('update')});
-//$('#rfhButtonPlotSettings').on('click',function () {$('#plotSettingsModal').modal('show')});
 $('#rfhButtonMainSettings').on('click',function () {
   $('#powerSettingsInput').val(rfhCascade.Pin);
   $('#freqSettingsInput').val(rfhCascade.Fc);
   $('#bandwidthSettingsInput').val(rfhCascade.BW);
   $('#settingsModal').modal('show');
 });
-//$('#rfhButtonFreezePlot').on('click', function() {rfhCascade.plotFrozen = !rfhCascade.plotFrozen});
+
  $('#rfhButtonSaveFile').on('click', function() {saveFile()});
  $('#rfhButtonOpenFile').on('click', function() {openFile()});
  $('#rfhButtonPowerSweep').on('click',function () { openPowerSweepDialog() });
- //$('#rfhButtonPowerSweepGo').on('click',function () { validateInputs('pmtPowerSweepForm',function() {powerSweep()}) });
 
-//  var figure =  new draw2d.shape.node.Start({id:1,color: "#3d3d3d"});
 var figure =  new draw2d.shape.node.Start({id:1,color: "#3d3d3d"});
   var label = new draw2d.shape.basic.Label({text:"Input", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
   var labelAdd = figure.add(label, new draw2d.layout.locator.CenterLocator(figure));
@@ -128,7 +124,6 @@ var figure =  new draw2d.shape.node.Start({id:1,color: "#3d3d3d"});
   figure.getPort("output0").on("disconnect", function(p) {p.setVisible(true)});
   figure.setUserData({Name:"Input"});
   app.view.add(figure,100,100);
-//  figure.getPort("output0").setVisible(false);
 
   figure =  new draw2d.shape.node.End({id:2,color: "#3d3d3d"});
   label = new draw2d.shape.basic.Label({text:"Output", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
@@ -208,7 +203,7 @@ rfh.View = draw2d.Canvas.extend({
     }
 });
 
-///RFH Cascade code
+///RFH Cascade code///////////////////////////////
 function alignCascade(numParts) {
   let N = connectionList.length;
   let connectCheck = checkInOut();
@@ -238,8 +233,6 @@ function alignCascade(numParts) {
         }
     }
   }
-  console.log(cascadeList);
-
   return [error,cascadeList];
 }
 function checkInOut() {
@@ -278,25 +271,13 @@ function calcCascade(list) {
   for (let i=0;i<list.length;i++) {
     if(!app.view.getFigure(parseInt(list[i])).getUserData().disabled){
       console.log(app.view.getFigure(parseInt(list[i])).getUserData());
-
       Gdb = Gdb + parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().G);
-
   		gn = Math.pow(10,parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().G)/10);
   		ip = Math.pow(10,parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().IP3)/10);
   		p1 = Math.pow(10,parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().P1db)/10);
   		pmax = parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().Pmax);
-    /*  if(app.view.getFigure(parseInt(list[i])).getUserData().disabled){
-        console.log('disabled');
-        Gdb = 0;
-        ip = 1e10;
-        p1 = 1e10;
-        pmax = 1e10;
-      }*/
   		if (first == 0) {
   			NF = parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().NF);
-      /*  if(app.view.getFigure(parseInt(list[i])).getUserData().disabled){
-          NF = 0;
-        }*/
   			F = Math.pow(10,NF/10);
   			first = 1;
   			Glin = Math.pow(10,Gdb/10);
@@ -336,9 +317,7 @@ function calcCascade(list) {
   rfhCascade.dataOutput =[];
 	for (var i=0; i < partNames.length;i++) {
 		rfhCascade.dataOutput.push({"name" : partNames[i],"op1db" : partOP1db[i],"ip1db" : partIP1db[i],"nf" : partNF[i],"oip3" : partOIP3[i],"iip3" : partIIP3[i],});
-		console.log(rfhCascade.dataOutput[i]);
 	}
-  console.log(Gdb+" "+NF+" "+P1+" "+IP);
   let results = "RESULTS \n Gain = "+Gdb.toFixed(2)+" dB \n NF = "+NF.toFixed(2)+" dB \n OP1dB = "+P1.toFixed(2)+" dB \n OIP3 = "+IP.toFixed(2)+" dB";
   app.view.getFigure(0).setText(results);
   rfhCascade.plotActive = true;
@@ -402,7 +381,6 @@ function saveProperties() {
   $('#partPropsModal').modal('hide');
   let a = alignCascade(app.view.getFigures().data.length-1);
   if (a[0]  == 0) {
-    console.log('ready to calculate');
     calcCascade(a[1]);
   }
   else {
@@ -410,7 +388,6 @@ function saveProperties() {
   }
 }
 function plotData(action) {
-  console.log(rfhCascade.plotFrozen);
   var param = $('#plotTypeSelect').val();
   if (param == "") {
     param = "op1db";
@@ -431,14 +408,13 @@ function plotData(action) {
 		for (let i=0;i<rfhCascade.dataOutputFreeze.length;i++) {
 			partDataFreeze.push(rfhCascade.dataOutputFreeze[i][param]);
       var trace1 = {x:partNames,y:partDataFreeze};
-      console.log(trace1);
 		}
   }
 var trace2 = {x:partNames,y:partData};
 
 var data = rfhCascade.plotFrozen ? [trace1,trace2]:[trace2];
 var layout = {
-  title: 'Plot Title',
+  title: 'Cascade',
   xaxis: {
     title: 'Part',
     titlefont: {
@@ -467,11 +443,7 @@ if (action == 'update') {
   console.log(data);
   Plotly.newPlot('dataPlotDiv', data,layout,{displaylogo: false, editable:true,modeBarButtonsToRemove:['sendDataToCloud','pan2d','select2d','lasso2d','hoverClosestCartesian','hoverCompareCartesian','toggleSpikelines']});
 }
-/*remove buttons on displayModeBar
-Plotly.newPlot('myDiv', data, layout, {modeBarButtonsToRemove: ['toImage']});
-Plotly.newPlot('myDiv', data, layout, {displaylogo: false});
-Plotly.newPlot('myDiv', data, layout, {editable: true});
-*/
+
 }
 function plotUpdate() {
   var param = $('#plotTypeSelect').val();
@@ -499,17 +471,6 @@ function freezePlot() {
 function deleteTrace(){
   Plotly.deleteTraces('dataPlotDiv', 0);
 };
-function savePlotSettings() {
-	$('#myModal04').modal('hide');
-	d3.select('#plotTitle').text(d3.select('#plotTitleInput').property('value'));
-	d3.select('#plotYAxesText').text(d3.select('#yAxisLabelInput').property('value'));
-	d3.select('#plotXAxesText').text(d3.select('#xAxisLabelInput').property('value'));
-	d3.select('#plotLine').attr('stroke',d3.select('#plotPallete1').attr('value'));
-	if (pmtCascade.domMin != d3.select('#yAxisMinInput').property('value') || pmtCascade.domMax != d3.select('#yAxisMaxInput').property('value')) {
-		plotData('updateY');
-	}
-	console.log(d3.select('#plotPallete1').attr('value'));
-}
 function saveFile() {
   var writer = new draw2d.io.json.Writer();
   writer.marshal(app.view, function(json){
@@ -519,6 +480,9 @@ function saveFile() {
    $("#jsonText").val(jsonTxt);
 
  });
+}
+function testMenuClick () {
+  console.log('menu clicked');
 }
 function openFile() {
   var jsonDocument = $('#jsonText').val();
@@ -575,24 +539,11 @@ function openFile() {
      }
    });
 });
-   console.log(app.view.getFigures().data.length-1);
     let a = alignCascade(app.view.getFigures().data.length-1);
     if (a[0]  == 0) {
-      console.log('ready to calculate');
       calcCascade(a[1]);
     }
     else {
       console.log('not ready');
     }
-}
-function saveMainSettings() {
-  rfhCascade.Pin = $('#powerSettingsInput').val();
-  rfhCascade.Fc = $('#freqSettingsInput').val();
-  rfhCascade.BW = $('#bandwidthSettingsInput').val();
-  $('#settingsModal').modal('hide');
-  console.log('saved settings');
-}
-function openPowerSweepDialog() {
-	//jQuery('#pmtErrorMessage2').html('');
-	$('#myModal02').modal('show');
 }
