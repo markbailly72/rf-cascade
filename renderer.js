@@ -1,7 +1,19 @@
-var app = require('electron').remote;
-var dialog = app.dialog;
-var draw2d = require('draw2d');
+const appE = require('electron').remote;
+//appE is the electron object since app is already used for draw2d object
+const { ipcRenderer } = require('electron');
+const { dialog } = require('electron').remote;
+const draw2d = require('draw2d');
+const fs = require('fs');
 
+ipcRenderer.on( 'channel1', (e, args) => {
+  //console.log(args.action)
+  if (args.action === 'save') {
+    saveFile();
+  }
+  if (args.action === 'open') {
+    openFile();
+  }
+})
 //Application portion of Code///////
 var rfh = {};
 
@@ -472,25 +484,66 @@ function deleteTrace(){
   Plotly.deleteTraces('dataPlotDiv', 0);
 };
 function saveFile() {
-  var writer = new draw2d.io.json.Writer();
+  let writer = new draw2d.io.json.Writer();
   writer.marshal(app.view, function(json){
-   var jsonTxt = JSON.stringify(json,null,2);
-
-   console.log(jsonTxt);
-   $("#jsonText").val(jsonTxt);
-
+  let jsonTxt = JSON.stringify(json,null,2);
+  let filename = dialog.showSaveDialogSync(null);
+ 	if (filename === undefined){
+      console.log("You didn't save the file");
+      return;
+ 	}
+ 	// fileName is a string that contains the path and filename created in the save file dialog.
+ 	if (filename.substring(filename.length-5,filename.length) != ".json") {
+ 		filename=filename+".json";
+ 	}
+ 	fs.writeFile(filename, jsonTxt, function (err) {
+     if(err){
+      	console.log("alert","Design has NOT been saved. An error occurred creating the file "+err.message);
+     }
+     else {
+     		console.log("normal","Design has been saved.");
+     }
+ 	});
  });
 }
-function testMenuClick () {
-  console.log('menu clicked');
-}
 function openFile() {
-  var jsonDocument = $('#jsonText').val();
-  console.log(jsonDocument);
-  app.view.clear();
+//  var jsonDocument = $('#jsonText').val();
+  let filename = dialog.showOpenDialogSync();
+  let jsonDocument, data;
+
+  console.log(filename[0]);
+  if (filename[0] != undefined) {
+    data = fs.readFileSync(filename[0],'utf8');
+  }
+  console.log(data);
+  jsonDocument = data;
+  jsonDocument =
+           [
+            {
+                type: "draw2d.shape.basic.Oval",
+                id: "5b4c74b0-96d1-1aa3-7eca-bbeaed5fffd7",
+                x: 237,
+                y: 236,
+                width: 93,
+                height: 38
+             },
+              {
+                "type": "draw2d.shape.basic.Rectangle",
+                "id": "354fa3b9-a834-0221-2009-abc2d6bd852a",
+                "x": 225,
+                "y": 97,
+                "width": 201,
+                "height": 82,
+                "radius": 2
+             }
+          ];
+
+//  app.view.clear();
   var reader = new draw2d.io.json.Reader();
   reader.unmarshal(app.view, jsonDocument);
-  connectionList = [];
+
+//  connectionList = [];
+  /*
  app.view.getFigures().each(function(i,e) {
    if (e.getId() != 0) {
      var label = new draw2d.shape.basic.Label({text:e.getUserData().Name, color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
@@ -546,4 +599,5 @@ function openFile() {
     else {
       console.log('not ready');
     }
+    */
 }
