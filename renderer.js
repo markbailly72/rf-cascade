@@ -2,7 +2,7 @@ const appE = require('electron').remote;
 //appE is the electron object since app is already used for draw2d object
 const { ipcRenderer } = require('electron');
 const { dialog } = require('electron').remote;
-const draw2d = require('draw2d');
+//const draw2d = require('draw2d');
 const fs = require('fs');
 
 ipcRenderer.on( 'channel1', (e, args) => {
@@ -508,42 +508,21 @@ function saveFile() {
 }
 function openFile() {
 //  var jsonDocument = $('#jsonText').val();
+  var str = "draw2d.shape.basic.Oval";
   let filename = dialog.showOpenDialogSync();
   let jsonDocument, data;
-
   console.log(filename[0]);
   if (filename[0] != undefined) {
     data = fs.readFileSync(filename[0],'utf8');
   }
   console.log(data);
   jsonDocument = data;
-  jsonDocument =
-           [
-            {
-                type: "draw2d.shape.basic.Oval",
-                id: "5b4c74b0-96d1-1aa3-7eca-bbeaed5fffd7",
-                x: 237,
-                y: 236,
-                width: 93,
-                height: 38
-             },
-              {
-                "type": "draw2d.shape.basic.Rectangle",
-                "id": "354fa3b9-a834-0221-2009-abc2d6bd852a",
-                "x": 225,
-                "y": 97,
-                "width": 201,
-                "height": 82,
-                "radius": 2
-             }
-          ];
-
-//  app.view.clear();
+  app.view.clear();
   var reader = new draw2d.io.json.Reader();
   reader.unmarshal(app.view, jsonDocument);
 
-//  connectionList = [];
-  /*
+  connectionList = [];
+let idArray = [];
  app.view.getFigures().each(function(i,e) {
    if (e.getId() != 0) {
      var label = new draw2d.shape.basic.Label({text:e.getUserData().Name, color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
@@ -559,6 +538,7 @@ function openFile() {
      });
    }
    if (e.getId() >= 3) {
+     idArray.push(e.getId());
      e.on("dblclick",function(){
        activeDevice = e.getId();
        $('#myModalLabel').text(e.getUserData().Name+" Properties")
@@ -599,5 +579,6 @@ function openFile() {
     else {
       console.log('not ready');
     }
-    */
+    console.log(idArray);
+   partID = Math.max(...idArray)+1;
 }
