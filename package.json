@@ -12,10 +12,9 @@
     "electron-builder": "^22.1.0"
   },
   "dependencies": {
-    "draw2d": "^1.0.19"
   },
   "build": {
-    "appId": "s2pQuickPlot",
+    "appId": "RFCascade",
     "productName":"RF Cascade",
     "win": {
       "target": "nsis"
