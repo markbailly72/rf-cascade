@@ -179,7 +179,8 @@ rfh.View = draw2d.Canvas.extend({
     onDrop : function(droppedDomNode, x, y, shiftKey, ctrlKey)
     {
 			console.log($(droppedDomNode).attr("data-shape"));
-			var figure = new draw2d.shape.node.Between({id:partID});
+			//var figure = new draw2d.shape.node.Between({id:partID});
+      var figure = eval("new "+$(droppedDomNode).attr("data-shape")+"({id:partID})");
 		//var figure = new draw2d.shape.analog.OpAmp({id:partID})
 			var label = new draw2d.shape.basic.Label({text:"Part"+partID, color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
 		  figure.add(label, new draw2d.layout.locator.CenterLocator(figure));
