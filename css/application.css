@@ -20,11 +20,11 @@
 .palette_node_element {
 	border: 1px solid gray;
 	background-color: #f3f3f3;
-	padding: 10px;
+	/* padding: 5px; */
 	cursor: move;
-	width: 80px;
-	margin: 30px auto 30px auto;
+	/* width: 100px; */
+	margin: 30px auto 30px auto; 
 	text-align: center;
-	align: left;
+	/* align: left; */
 	border-radius: 5px;
 }

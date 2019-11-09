@@ -130,7 +130,7 @@ $('#rfhButtonMainSettings').on('click',function () {
 
 var figure =  new draw2d.shape.node.Start({id:1,color: "#3d3d3d"});
   var label = new draw2d.shape.basic.Label({text:"Input", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
-  var labelAdd = figure.add(label, new draw2d.layout.locator.CenterLocator(figure));
+  var labelAdd = figure.add(label, new draw2d.layout.locator.TopLocator(figure));
   figure.setDeleteable(false);
   figure.getPort("output0").on("connect", function(p) {p.setVisible(false)});
   figure.getPort("output0").on("disconnect", function(p) {p.setVisible(true)});
@@ -139,7 +139,7 @@ var figure =  new draw2d.shape.node.Start({id:1,color: "#3d3d3d"});
 
   figure =  new draw2d.shape.node.End({id:2,color: "#3d3d3d"});
   label = new draw2d.shape.basic.Label({text:"Output", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
-  figure.add(label, new draw2d.layout.locator.CenterLocator(figure));
+  figure.add(label, new draw2d.layout.locator.TopLocator(figure));
   figure.setDeleteable(false);
   figure.getPort("input0").on("connect", function(p) {p.setVisible(false)});
   figure.getPort("input0").on("disconnect", function(p) {p.setVisible(true)});
@@ -183,7 +183,7 @@ rfh.View = draw2d.Canvas.extend({
       var figure = eval("new "+$(droppedDomNode).attr("data-shape")+"({id:partID})");
 		//var figure = new draw2d.shape.analog.OpAmp({id:partID})
 			var label = new draw2d.shape.basic.Label({text:"Part"+partID, color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
-		  figure.add(label, new draw2d.layout.locator.CenterLocator(figure));
+		  figure.add(label, new draw2d.layout.locator.TopLocator(figure));
 			figure.setUserData({Name:"Part"+partID,G:10,NF:3,P1db:20,IP3:30,Psat:22,Pmax:10,disabled:false});
 			figure.setWidth(100);
 			figure.setResizeable(false);
@@ -527,7 +527,7 @@ let idArray = [];
  app.view.getFigures().each(function(i,e) {
    if (e.getId() != 0) {
      var label = new draw2d.shape.basic.Label({text:e.getUserData().Name, color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
-     var labelAdd = e.add(label, new draw2d.layout.locator.CenterLocator());
+     var labelAdd = e.add(label, new draw2d.layout.locator.TopLocator());
      e.getPorts().each(function(ii,ee) {
        //future connections
        ee.on("connect", function(p) {p.setVisible(false)});
