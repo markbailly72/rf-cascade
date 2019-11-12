@@ -4,6 +4,33 @@ const { ipcRenderer } = require('electron');
 const { dialog } = require('electron').remote;
 //const draw2d = require('draw2d');
 const fs = require('fs');
+//import * as fileio from './js/fileio.js';
+let activeDevice;
+let numParts = 0;
+let numLines = 0;
+let lineID = 1;
+let partID = 3;
+let lineList = [];
+let partList = [];
+let connectionList = [];
+let cascadeList = [];
+let canvas;
+let app;
+let rfhCascade = {'Pin':-20,
+                  'Fc':1000,
+                  'BW':100,
+                  'Funits':'MHz',
+                  'plotActive':false,
+                  'dataOutput':[],
+                  'plotSVGWidth' : 960,
+  		            'plotSVGHeight' : 700,
+                  'domMax': 100,
+  		            'domMin': 0,
+                  'plotFrozen':false,
+                  'dataOutputFreeze':[],
+                  'nameArray':[]
+};
+
 
 ipcRenderer.on( 'channel1', (e, args) => {
   //console.log(args.action)
@@ -12,6 +39,10 @@ ipcRenderer.on( 'channel1', (e, args) => {
   }
   if (args.action === 'open') {
     openFile();
+  }
+  if (args.action === 'settings') {
+    $('#powerInput').val(rfhCascade.Pin);
+    $('#settingsModal').modal('show');
   }
 })
 //Application portion of Code///////
@@ -39,30 +70,7 @@ rfh.Application = Class.extend(
 	  }
 });
 
-var activeDevice;
-var numParts = 0;
-var numLines = 0;
-var lineID = 1;
-var partID = 3;
-var lineList = [];
-var partList = [];
-var connectionList = [];
-var cascadeList = [];
-var canvas;
-var app;
-var rfhCascade = {'Pin':-50,
-                  'Fc':1000,
-                  'BW':100,
-                  'Funits':'MHz',
-                  'plotActive':false,
-                  'dataOutput':[],
-                  'plotSVGWidth' : 960,
-  		            'plotSVGHeight' : 700,
-                  'domMax': 100,
-  		            'domMin': 0,
-                  'plotFrozen':false,
-                  'dataOutputFreeze':[]
-};
+
 document.addEventListener("DOMContentLoaded",function () {
 
 
@@ -114,41 +122,34 @@ document.addEventListener("DOMContentLoaded",function () {
          return connection;
      }
  }));
+ //Create button functionality
 $('#savePartPropsButton').on('click',function () { validateInputs('rfhDeviceForm',function() {saveProperties()}) });
-$('#saveSettingsButton').on('click',function () {saveMainSettings()});
+$('#saveMainSettingsButton').on('click',function () {saveMainSettings()});
 $('#plotTypeSelect').on('change',function () {plotData('update')});
-$('#rfhButtonMainSettings').on('click',function () {
-  $('#powerSettingsInput').val(rfhCascade.Pin);
-  $('#freqSettingsInput').val(rfhCascade.Fc);
-  $('#bandwidthSettingsInput').val(rfhCascade.BW);
-  $('#settingsModal').modal('show');
-});
-
- $('#rfhButtonSaveFile').on('click', function() {saveFile()});
- $('#rfhButtonOpenFile').on('click', function() {openFile()});
- $('#rfhButtonPowerSweep').on('click',function () { openPowerSweepDialog() });
-
+$('#rfhButtonSaveFile').on('click', function() {saveFile()});
+$('#rfhButtonOpenFile').on('click', function() {openFile()});
+//Create input and output elements and results bloxk
 var figure =  new draw2d.shape.node.Start({id:1,color: "#3d3d3d"});
-  var label = new draw2d.shape.basic.Label({text:"Input", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
-  var labelAdd = figure.add(label, new draw2d.layout.locator.TopLocator(figure));
-  figure.setDeleteable(false);
-  figure.getPort("output0").on("connect", function(p) {p.setVisible(false)});
-  figure.getPort("output0").on("disconnect", function(p) {p.setVisible(true)});
-  figure.setUserData({Name:"Input"});
-  app.view.add(figure,100,100);
+var label = new draw2d.shape.basic.Label({text:"Input", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
+var labelAdd = figure.add(label, new draw2d.layout.locator.TopLocator(figure));
+figure.setDeleteable(false);
+figure.getPort("output0").on("connect", function(p) {p.setVisible(false)});
+figure.getPort("output0").on("disconnect", function(p) {p.setVisible(true)});
+figure.setUserData({Name:"Input"});
+app.view.add(figure,100,100);
 
-  figure =  new draw2d.shape.node.End({id:2,color: "#3d3d3d"});
-  label = new draw2d.shape.basic.Label({text:"Output", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
-  figure.add(label, new draw2d.layout.locator.TopLocator(figure));
-  figure.setDeleteable(false);
-  figure.getPort("input0").on("connect", function(p) {p.setVisible(false)});
-  figure.getPort("input0").on("disconnect", function(p) {p.setVisible(true)});
-  figure.setUserData({Name:"Output"});
-  app.view.add(figure,500,100);
+figure =  new draw2d.shape.node.End({id:2,color: "#3d3d3d"});
+label = new draw2d.shape.basic.Label({text:"Output", color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
+figure.add(label, new draw2d.layout.locator.TopLocator(figure));
+figure.setDeleteable(false);
+figure.getPort("input0").on("connect", function(p) {p.setVisible(false)});
+figure.getPort("input0").on("disconnect", function(p) {p.setVisible(true)});
+figure.setUserData({Name:"Output"});
+app.view.add(figure,500,100);
 
-  var msg = new draw2d.shape.note.PostIt({id:0,text:"RESULTS", x:400, y:100});
-  msg.setDeleteable(false);
-  app.view.add(msg,600,100);
+var msg = new draw2d.shape.note.PostIt({id:0,text:"RESULTS", x:400, y:100});
+msg.setDeleteable(false);
+app.view.add(msg,600,100);
 
 });
 ///View portion of Code///////////
@@ -212,6 +213,7 @@ rfh.View = draw2d.Canvas.extend({
 				}
 			});
 		  app.view.add(figure,x,y);
+      rfhCascde.nameArray.push("Part"+partID);
 			partID++;
     }
 });
@@ -266,7 +268,7 @@ function checkInOut() {
 }
 function calcCascade(list) {
   var deviceArray = [];
-	var partNames = [],partOP1db = [],partIP1db = [],partNF = [],partIIP3 = [],partOIP3 = [];
+	var partNames = [],partOP1db = [],partIP1db = [],partNF = [],partIIP3 = [],partOIP3 = [], partPower= [];
 	var partX = [];
 	var data = [];
 	var xtick = 0;
@@ -324,12 +326,13 @@ function calcCascade(list) {
   		partIIP3.push(inIP);
   		partNF.push(NF);
   		partX.push(xtick);
+      partPower.push(Pin);
     }
   }
   partX.push(xtick);
   rfhCascade.dataOutput =[];
 	for (var i=0; i < partNames.length;i++) {
-		rfhCascade.dataOutput.push({"name" : partNames[i],"op1db" : partOP1db[i],"ip1db" : partIP1db[i],"nf" : partNF[i],"oip3" : partOIP3[i],"iip3" : partIIP3[i],});
+		rfhCascade.dataOutput.push({"name" : partNames[i],"op1db" : partOP1db[i],"ip1db" : partIP1db[i],"nf" : partNF[i],"oip3" : partOIP3[i],"iip3" : partIIP3[i],"power": partPower[i]});
 	}
   let results = "RESULTS \n Gain = "+Gdb.toFixed(2)+" dB \n NF = "+NF.toFixed(2)+" dB \n OP1dB = "+P1.toFixed(2)+" dB \n OIP3 = "+IP.toFixed(2)+" dB";
   app.view.getFigure(0).setText(results);
@@ -400,6 +403,10 @@ function saveProperties() {
     console.log('not ready');
   }
 }
+function saveMainSettings() {
+  rfhCascade.Pin = $('#powerInput').val();
+  $('#settingsModal').modal('hide');
+}
 function plotData(action) {
   var param = $('#plotTypeSelect').val();
   if (param == "") {
@@ -423,40 +430,39 @@ function plotData(action) {
       var trace1 = {x:partNames,y:partDataFreeze};
 		}
   }
-var trace2 = {x:partNames,y:partData};
+  var trace2 = {x:partNames,y:partData};
 
-var data = rfhCascade.plotFrozen ? [trace1,trace2]:[trace2];
-var layout = {
-  title: 'Cascade',
-  xaxis: {
-    title: 'Part',
-    titlefont: {
-      family: 'Courier New, monospace',
-      size: 18,
-      color: '#7f7f7f'
+  var data = rfhCascade.plotFrozen ? [trace1,trace2]:[trace2];
+  var layout = {
+    title: 'Cascade',
+    xaxis: {
+      title: 'Part',
+      titlefont: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+    yaxis: {
+      title: $( "#plotTypeSelect option:selected" ).text(),
+      titlefont: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
     }
-  },
-  yaxis: {
-    title: $( "#plotTypeSelect option:selected" ).text(),
-    titlefont: {
-      family: 'Courier New, monospace',
-      size: 18,
-      color: '#7f7f7f'
-    }
+  };
+  if (action == 'new') {
+    Plotly.newPlot('dataPlotDiv', data,layout,{displaylogo: false, editable:true, modeBarButtonsToRemove:['sendDataToCloud','pan2d','select2d','lasso2d','hoverClosestCartesian','hoverCompareCartesian','toggleSpikelines']});
+    console.log(data);
+    rfhCascade.dataOutputFreeze = rfhCascade.dataOutput;
+  //  rfhCascade.dataOutput =[];
   }
-};
-if (action == 'new') {
-  Plotly.newPlot('dataPlotDiv', data,layout,{displaylogo: false, editable:true, modeBarButtonsToRemove:['sendDataToCloud','pan2d','select2d','lasso2d','hoverClosestCartesian','hoverCompareCartesian','toggleSpikelines']});
-  console.log(data);
-  rfhCascade.dataOutputFreeze = rfhCascade.dataOutput;
-//  rfhCascade.dataOutput =[];
-}
-if (action == 'update') {
-  Plotly.purge('dataPlotDiv');
-  console.log(data);
-  Plotly.newPlot('dataPlotDiv', data,layout,{displaylogo: false, editable:true,modeBarButtonsToRemove:['sendDataToCloud','pan2d','select2d','lasso2d','hoverClosestCartesian','hoverCompareCartesian','toggleSpikelines']});
-}
-
+  if (action == 'update') {
+    Plotly.purge('dataPlotDiv');
+    console.log(data);
+    Plotly.newPlot('dataPlotDiv', data,layout,{displaylogo: false, editable:true,modeBarButtonsToRemove:['sendDataToCloud','pan2d','select2d','lasso2d','hoverClosestCartesian','hoverCompareCartesian','toggleSpikelines']});
+  }
 }
 function plotUpdate() {
   var param = $('#plotTypeSelect').val();

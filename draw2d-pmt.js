@@ -20220,6 +20220,7 @@ __webpack_require__(/*! ./shape/analog/GenericBlock */ "./src/shape/analog/Gener
 __webpack_require__(/*! ./shape/analog/HybridCoupler */ "./src/shape/analog/HybridCoupler.js");
 __webpack_require__(/*! ./shape/analog/Mixer */ "./src/shape/analog/Mixer.js");
 __webpack_require__(/*! ./shape/analog/Splitter */ "./src/shape/analog/Splitter.js");
+__webpack_require__(/*! ./shape/analog/Spdt */ "./src/shape/analog/Spdt.js");
 //require('./shape/analog/ResistorBridge');
 //require('./shape/analog/ResistorVertical');
 //require('./shape/analog/VoltageSupplyHorizontal');
@@ -38738,7 +38739,7 @@ _packages2.default.shape.analog.HybridCoupler = _packages2.default.SVGFigure.ext
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20 20 l 25,0 l 10,60 l 25,0 M 80 20 l -25,0 l -10,60 l -25,0 stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20 20 l 25,0 l 10,60 l 25,0 M 80 20 l -25,0 l -10,60 l -25,0" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
@@ -38832,7 +38833,101 @@ _packages2.default.shape.analog.Mixer = _packages2.default.SVGFigure.extend({
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50"  height="50">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 20,50 a30,30 0 1,1 60,0 a30,30 0 1,1 -60,0 z M 28,28 l 44,44 m -44,0 l 44,-44" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100"  height="100">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20,50 a30,30 0 1,1 60,0 a30,30 0 1,1 -60,0 z M 28,28 l 44,44 m -44,0 l 44,-44" stroke="black" fill="none" />' + '</svg>';
+  },
+
+  /**
+   * @inheritdoc
+   */
+  repaint: function repaint(attributes) {
+    if (this.repaintBlocked === true || this.shape === null) {
+      return;
+    }
+
+    attributes = attributes || {};
+
+    // redirect the backgroundColor to an internal SVG node.
+    // In this case only a small part of the shape are filled with the background color
+    // and not the complete rectangle/bounding box
+    //
+    attributes["fill"] = "none";
+    if (this.bgColor != null) {
+      this.svgNodes[0].attr({ fill: this.bgColor.rgba() });
+    }
+
+    this._super(attributes);
+
+    return this;
+  }
+
+}); /**
+     * @class draw2d.shape.analog.OpAmp
+     * Hand drawn arrow which points down left
+     *
+     * See the example:
+     *
+     *     @example preview small frame
+     *
+     *     let figure =  new draw2d.shape.analog.OpAmp({x:10, y:10});
+     *
+     *     canvas.add(figure);
+     *
+     *
+     * @extends draw2d.SVGFigure
+     */
+
+/***/ }),
+
+/***/ "./src/shape/analog/Spdt.js":
+/*!**********************************!*\
+  !*** ./src/shape/analog/Spdt.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _packages = __webpack_require__(/*! ../../packages */ "./src/packages.js");
+
+var _packages2 = _interopRequireDefault(_packages);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_packages2.default.shape.analog.Spdt = _packages2.default.SVGFigure.extend({
+
+  NAME: "draw2d.shape.analog.Spdt",
+
+  // custom locator for the special design of the OpAmp Input area
+  MyInputPortLocator: _packages2.default.layout.locator.PortLocator.extend({
+    init: function init() {
+      this._super();
+    }
+  }),
+
+  /**
+   * @constructor
+   * Create a new instance
+   *
+   * @param {Object} [attr] the configuration of the shape
+   */
+  init: function init(attr, setter, getter) {
+    this._super(extend({ stroke: 0, bgColor: "#f0f0ff" }, attr), setter, getter);
+
+    //  this.inputLocator = new this.MyInputPortLocator()
+
+    //  this.createPort("input", this.inputLocator)
+    //  this.createPort("input", this.inputLocator)
+
+    this.createPort("output");
+    this.createPort("input");
+  },
+
+  /**
+   * @inheritdoc
+   */
+  getSVG: function getSVG() {
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20,50 l 20,0 l 20,-20 l 20,0 m -20,40 l 20,0" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**

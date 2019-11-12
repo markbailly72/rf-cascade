@@ -43,6 +43,17 @@ function createWindow () {
               }
             }
           ]
+      },
+      {
+          label: 'Edit',
+          submenu: [
+            {
+              label: 'Settings',
+              click: () => {
+                mainWindow.webContents.send('channel1', {action:'settings'})
+              }
+            }
+          ]
       }
   ])
   Menu.setApplicationMenu(menu);
