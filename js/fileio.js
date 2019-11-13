@@ -1,4 +1,4 @@
-function saveFile() {
+exports.saveFile = function() {
   let writer = new draw2d.io.json.Writer();
   writer.marshal(app.view, function(json){
   let jsonTxt = JSON.stringify(json,null,2);
@@ -21,7 +21,7 @@ function saveFile() {
  	});
  });
 }
-function openFile() {
+exports.openFile = function() {
 //  var jsonDocument = $('#jsonText').val();
   var str = "draw2d.shape.basic.Oval";
   let filename = dialog.showOpenDialogSync();

@@ -100,6 +100,7 @@ document.addEventListener("DOMContentLoaded",function () {
              else {
                i++;
              }
+             //clearPlot();
              app.view.getFigure(0).setText("RESULTS");
            }
            //FIX clearPlot
@@ -182,7 +183,7 @@ rfh.View = draw2d.Canvas.extend({
 			console.log($(droppedDomNode).attr("data-shape"));
 			//var figure = new draw2d.shape.node.Between({id:partID});
       var figure = eval("new "+$(droppedDomNode).attr("data-shape")+"({id:partID})");
-		//var figure = new draw2d.shape.analog.OpAmp({id:partID})
+		//var figure = new draw2d.shape.analog.Amplifier({id:partID})
 			var label = new draw2d.shape.basic.Label({text:"Part"+partID, color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
 		  figure.add(label, new draw2d.layout.locator.TopLocator(figure));
 			figure.setUserData({Name:"Part"+partID,G:10,NF:3,P1db:20,IP3:30,Psat:22,Pmax:10,disabled:false});
@@ -195,7 +196,7 @@ rfh.View = draw2d.Canvas.extend({
 		  figure.getPort("output0").on("disconnect", function(p) {p.setVisible(true)});
 			figure.on("dblclick", function() {
 				activeDevice = figure.getId();
-	      console.log(figure.getChildren().first().text);
+	      //console.log(figure.getChildren().first().text);
 	      $('#myModalLabel03').text(figure.getUserData().Name+" Properties")
 	      $('#deviceNameInput').val(figure.getUserData().Name);
 	      $('#deviceGainInput').val(figure.getUserData().G);
@@ -213,7 +214,7 @@ rfh.View = draw2d.Canvas.extend({
 				}
 			});
 		  app.view.add(figure,x,y);
-      rfhCascde.nameArray.push("Part"+partID);
+      rfhCascade.nameArray.push("Part"+partID);
 			partID++;
     }
 });
@@ -459,7 +460,7 @@ function plotData(action) {
   //  rfhCascade.dataOutput =[];
   }
   if (action == 'update') {
-    Plotly.purge('dataPlotDiv');
+   Plotly.purge('dataPlotDiv');
     console.log(data);
     Plotly.newPlot('dataPlotDiv', data,layout,{displaylogo: false, editable:true,modeBarButtonsToRemove:['sendDataToCloud','pan2d','select2d','lasso2d','hoverClosestCartesian','hoverCompareCartesian','toggleSpikelines']});
   }
@@ -469,10 +470,10 @@ function plotUpdate() {
 }
 function clearPlot() {
   if(rfhCascade.plotFrozen){
-    Plotly.deleteTraces('dataPlotDiv',1);
+  //  Plotly.deleteTraces('dataPlotDiv',1);
   }
   else {
-    Plotly.deleteTraces('dataPlotDiv',0);
+  //  Plotly.deleteTraces('dataPlotDiv',0);
   }
 }
 function freezePlot() {
@@ -488,7 +489,7 @@ function freezePlot() {
 	}
 }
 function deleteTrace(){
-  Plotly.deleteTraces('dataPlotDiv', 0);
+//  Plotly.deleteTraces('dataPlotDiv', 0);
 };
 function saveFile() {
   let writer = new draw2d.io.json.Writer();
@@ -576,8 +577,10 @@ let idArray = [];
        else {
          i++;
        }
+       app.view.getFigure(0).setText("RESULTS");
      }
    });
+
 });
     let a = alignCascade(app.view.getFigures().data.length-1);
     if (a[0]  == 0) {
