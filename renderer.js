@@ -6,6 +6,7 @@ const { dialog } = require('electron').remote;
 const fs = require('fs');
 //import * as fileio from './js/fileio.js';
 let activeDevice;
+let activeName;
 let numParts = 0;
 let numLines = 0;
 let lineID = 1;
@@ -151,6 +152,11 @@ app.view.add(figure,500,100);
 var msg = new draw2d.shape.note.PostIt({id:0,text:"RESULTS", x:400, y:100});
 msg.setDeleteable(false);
 app.view.add(msg,600,100);
+// app.view.on("figure:remove", function(emitter,event) {
+//   rfhCascade.nameArray.splice(rfhCascade.nameArray.indexOf(activeName), 1);
+//   console.log(rfhCascade.nameArray);
+//   activeName = "";
+// });
 
 });
 ///View portion of Code///////////
@@ -196,7 +202,7 @@ rfh.View = draw2d.Canvas.extend({
 		  figure.getPort("output0").on("disconnect", function(p) {p.setVisible(true)});
 			figure.on("dblclick", function() {
 				activeDevice = figure.getId();
-	      //console.log(figure.getChildren().first().text);
+	      activeName = figure.getChildren().first().text;
 	      $('#myModalLabel03').text(figure.getUserData().Name+" Properties")
 	      $('#deviceNameInput').val(figure.getUserData().Name);
 	      $('#deviceGainInput').val(figure.getUserData().G);
@@ -213,8 +219,19 @@ rfh.View = draw2d.Canvas.extend({
 					$('#disableDeviceCB').prop("checked",false);
 				}
 			});
+      figure.on("click", function() {
+        activeDevice = figure.getId();
+        activeName = figure.getChildren().first().text;
+        console.log(activeName);
+      });
+      figure.on("removed", function(emitter,event) {
+        rfhCascade.nameArray.splice(rfhCascade.nameArray.indexOf(figure.getChildren().first().text), 1);
+        console.log(rfhCascade.nameArray);
+        activeName = "";
+      });
 		  app.view.add(figure,x,y);
       rfhCascade.nameArray.push("Part"+partID);
+      console.log(rfhCascade.nameArray);
 			partID++;
     }
 });
@@ -559,6 +576,18 @@ let idArray = [];
 	       $('#devicePmaxInput').val(e.getUserData().Pmax);
 	       $('#partPropsModal').modal('show');
      });
+     e.on("click", function() {
+       activeDevice = e.getId();
+       activeName = e.getChildren().first().text;
+       console.log(activeName);
+     });
+     e.on("removed", function(emitter,event) {
+       rfhCascade.nameArray.splice(rfhCascade.nameArray.indexOf(e.getChildren().first().text), 1);
+       console.log(rfhCascade.nameArray);
+       activeName = "";
+     });
+     rfhCascade.nameArray.push(e.getChildren().first().text);
+     activeName = e.getChildren().first().text;
    }
    if (e.getId() == 1 || e.getId() == 2) {
      e.setDeleteable(false);
@@ -589,6 +618,6 @@ let idArray = [];
     else {
       console.log('not ready');
     }
-    console.log(idArray);
+    console.log(rfhCascade.nameArray);
    partID = Math.max(...idArray)+1;
 }
