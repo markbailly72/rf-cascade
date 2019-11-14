@@ -7,6 +7,7 @@ const fs = require('fs');
 //import * as fileio from './js/fileio.js';
 let activeDevice;
 let activeName;
+let originalName;
 let numParts = 0;
 let numLines = 0;
 let lineID = 1;
@@ -190,9 +191,11 @@ rfh.View = draw2d.Canvas.extend({
 			//var figure = new draw2d.shape.node.Between({id:partID});
       var figure = eval("new "+$(droppedDomNode).attr("data-shape")+"({id:partID})");
 		//var figure = new draw2d.shape.analog.Amplifier({id:partID})
+      let params = $(droppedDomNode).attr("data-params").split(",");
+      console.log(params);
 			var label = new draw2d.shape.basic.Label({text:"Part"+partID, color:"#0d0d0d", fontColor:"#0d0d0d",stroke:0});
 		  figure.add(label, new draw2d.layout.locator.TopLocator(figure));
-			figure.setUserData({Name:"Part"+partID,G:10,NF:3,P1db:20,IP3:30,Psat:22,Pmax:10,disabled:false});
+			figure.setUserData({Name:"Part"+partID,G:params[0],NF:params[1],P1db:params[2],IP3:params[3],Psat:params[4],Pmax:params[5],disabled:false});
 			figure.setWidth(100);
 			figure.setResizeable(false);
 			figure.setBackgroundColor('#ffffff');
@@ -204,6 +207,7 @@ rfh.View = draw2d.Canvas.extend({
 				activeDevice = figure.getId();
 	      activeName = figure.getChildren().first().text;
 	      $('#myModalLabel03').text(figure.getUserData().Name+" Properties")
+        originalName = figure.getUserData().Name;
 	      $('#deviceNameInput').val(figure.getUserData().Name);
 	      $('#deviceGainInput').val(figure.getUserData().G);
 	      $('#deviceNFInput').val(figure.getUserData().NF);
@@ -359,6 +363,13 @@ function calcCascade(list) {
 }
 function validateInputs(form,callBack) {
 	var noErrors = true;
+  if ($('#deviceNameInput').val() != originalName){
+    if (rfhCascade.nameArray.includes($('#deviceNameInput').val())){
+      noErrors = false
+      $('#deviceNameInput').focus();
+      return;
+    }
+  }
   if (isNaN($('#deviceGainInput').val())) {
     noErrors = false
     $('#deviceGainInput').focus();
@@ -458,7 +469,9 @@ function plotData(action) {
       titlefont: {
         family: 'Courier New, monospace',
         size: 18,
-        color: '#7f7f7f'
+        color: '#7f7f7f',
+        showlines: true,
+        zeroline: true
       }
     },
     yaxis: {
@@ -466,7 +479,9 @@ function plotData(action) {
       titlefont: {
         family: 'Courier New, monospace',
         size: 18,
-        color: '#7f7f7f'
+        color: '#7f7f7f',
+        showlines: true,
+        zeroline: true
       }
     }
   };
