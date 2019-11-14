@@ -153,11 +153,6 @@ app.view.add(figure,500,100);
 var msg = new draw2d.shape.note.PostIt({id:0,text:"RESULTS", x:400, y:100});
 msg.setDeleteable(false);
 app.view.add(msg,600,100);
-// app.view.on("figure:remove", function(emitter,event) {
-//   rfhCascade.nameArray.splice(rfhCascade.nameArray.indexOf(activeName), 1);
-//   console.log(rfhCascade.nameArray);
-//   activeName = "";
-// });
 
 });
 ///View portion of Code///////////
@@ -261,14 +256,22 @@ function alignCascade(numParts) {
     return error;
   }
   while (cascadeList.length != numParts-2) {
-    for (let i=0;i<connectionList.length;i++) {
-        if(connectionList[i].split(",")[1] == nextPart) {
-          if (connectionList[i].split(",")[2] != 2) {
-            cascadeList.push(connectionList[i].split(",")[2]);
-            nextPart = connectionList[i].split(",")[2];
-          }
+    // for (let i=0;i<connectionList.length;i++) {
+    //     if(connectionList[i].split(",")[1] == nextPart) {
+    //       if (connectionList[i].split(",")[2] != 2) {
+    //         cascadeList.push(connectionList[i].split(",")[2]);
+    //         nextPart = connectionList[i].split(",")[2];
+    //       }
+    //     }
+    // }
+    connectionList.forEach(function(cList) {
+      if(cList.split(",")[1] == nextPart) {
+        if (cList.split(",")[2] != 2) {
+          cascadeList.push(cList.split(",")[2]);
+          nextPart = cList.split(",")[2];
         }
-    }
+      }
+    });
   }
   return [error,cascadeList];
 }
@@ -276,10 +279,14 @@ function checkInOut() {
   let isConnectedOut = false;
   let isConnectedIn = false;
   let list = [];
-  for (let i=0;i<connectionList.length;i++) {
-    list.push(connectionList[i].split(",")[1]);
-    list.push(connectionList[i].split(",")[2]);
-  }
+  connectionList.forEach(function(cList) {
+    list.push(cList.split(",")[1]);
+    list.push(cList.split(",")[2]);
+  });
+  // for (let i=0;i<connectionList.length;i++) {
+  //   list.push(connectionList[i].split(",")[1]);
+  //   list.push(connectionList[i].split(",")[2]);
+  // }
   if (list.includes("1")) {
     isConnectedIn = true;
   }
@@ -444,15 +451,22 @@ function plotData(action) {
   }
   var partX = [], partX2 = [];
 	var partNames = [], partData = [], partDataFreeze = [], xWidth, xTickSize;
-	for (var i=0;i<rfhCascade.dataOutput.length;i++) {
-		partNames.push(rfhCascade.dataOutput[i].name);
-	}
-	for (var i=0;i<rfhCascade.dataOutput.length;i++) {
-		partData.push(rfhCascade.dataOutput[i][param]);
-	}
-	for (var j=0;j<partNames.length;j++) {
-		partX.push(j*100);
-	}
+  rfhCascade.dataOutput.forEach(function(dataOuput) {
+    partNames.push(dataOutput.name);
+    partData.push(dataOutput[param]);
+  });
+	// for (var i=0;i<rfhCascade.dataOutput.length;i++) {
+	// 	partNames.push(rfhCascade.dataOutput[i].name);
+	// }
+	// for (var i=0;i<rfhCascade.dataOutput.length;i++) {
+	// 	partData.push(rfhCascade.dataOutput[i][param]);
+	// }
+  partNames.foreach(function(partName) {
+    partX.push(j*100);
+  });
+	// for (var j=0;j<partNames.length;j++) {
+	// 	partX.push(j*100);
+	// }
 	if (rfhCascade.plotFrozen) {
 		for (let i=0;i<rfhCascade.dataOutputFreeze.length;i++) {
 			partDataFreeze.push(rfhCascade.dataOutputFreeze[i][param]);
@@ -548,7 +562,7 @@ function saveFile() {
 }
 function openFile() {
 //  var jsonDocument = $('#jsonText').val();
-  var str = "draw2d.shape.basic.Oval";
+  //var str = "draw2d.shape.basic.Oval";
   let filename = dialog.showOpenDialogSync();
   let jsonDocument, data;
   console.log(filename[0]);
