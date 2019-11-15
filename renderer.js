@@ -5,6 +5,7 @@ const { dialog } = require('electron').remote;
 //const draw2d = require('draw2d');
 const fs = require('fs');
 //import * as fileio from './js/fileio.js';
+//connectionList holds the connected parts in an array: ["1,1,3"] line 1 connects input port1 to  part3
 let activeDevice;
 let activeName;
 let originalName;
@@ -110,9 +111,10 @@ document.addEventListener("DOMContentLoaded",function () {
          });
          connection.on('added', function(){
            connectionList.push(connection.getId()+","+connection.getSource().getParent().getId() + ","+connection.getTarget().getParent().getId());
+           console.log(connectionList);
          });
          connection.on("added",function(){
-           let a = alignCascade(connection.canvas.getFigures().data.length-1);
+           let a = alignCascade(connection.canvas.getFigures().data.length-1); //pass number of parts
            if (a[0]  == 0) {
              console.log('ready to calculate');
              calcCascade(a[1]);
@@ -238,11 +240,11 @@ rfh.View = draw2d.Canvas.extend({
 ///RFH Cascade code///////////////////////////////
 function alignCascade(numParts) {
   let N = connectionList.length;
-  let connectCheck = checkInOut();
+//  let connectCheck = checkInOut();
   let cascadeList = [];
   let error = 0;
   let nextPart = 1;
-  if (!connectCheck[0]) {
+/*  if (!connectCheck[0]) {
     error = 1; //no input port
   }
   if (!connectCheck[1]) {
@@ -250,7 +252,7 @@ function alignCascade(numParts) {
   }
   if (error != 0) {
     return error;
-  }
+  }*/
   if (numParts != connectionList.length+1) {
     error = 5; //unconnected part
     return error;
@@ -267,22 +269,22 @@ function alignCascade(numParts) {
   }
   return [error,cascadeList];
 }
-function checkInOut() {
-  let isConnectedOut = false;
-  let isConnectedIn = false;
-  let list = [];
-  connectionList.forEach(function(cList) {
-    list.push(cList.split(",")[1]);
-    list.push(cList.split(",")[2]);
-  });
-  if (list.includes("1")) {
-    isConnectedIn = true;
-  }
-  if (list.includes("2")) {
-    isConnectedOut = true;
-  }
-  return [isConnectedIn,isConnectedOut];
-}
+// function checkInOut() {
+//   let isConnectedOut = false;
+//   let isConnectedIn = false;
+//   let list = [];
+//   connectionList.forEach(function(cList) {
+//     list.push(cList.split(",")[1]);
+//     list.push(cList.split(",")[2]);
+//   });
+//   if (list.includes("1")) {
+//     isConnectedIn = true;
+//   }
+//   if (list.includes("2")) {
+//     isConnectedOut = true;
+//   }
+//   return [isConnectedIn,isConnectedOut];
+// }
 function calcCascade(list) {
   var deviceArray = [];
 	var partNames = [],partOP1db = [],partIP1db = [],partNF = [],partIIP3 = [],partOIP3 = [], partPower= [];
@@ -340,8 +342,6 @@ function calcCascade(list) {
       rfhCascade.dataOutput.push({"name" : app.view.getFigure(parseInt(l)).getChildren().data[0].text,"op1db" : P1,"ip1db" : inP1,"nf" : NF,"oip3" : IP,"iip3" : inIP,"power": Pin});
     }
   });
-
-
   partX.push(xtick);
   let results = "RESULTS \n Gain = "+Gdb.toFixed(2)+" dB \n NF = "+NF.toFixed(2)+" dB \n OP1dB = "+P1.toFixed(2)+" dB \n OIP3 = "+IP.toFixed(2)+" dB";
   app.view.getFigure(0).setText(results);
