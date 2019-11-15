@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, dialog, BrowserWindow, Menu, ipcMain} = require('electron')
+const {app, dialog, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -14,7 +14,7 @@ function createWindow () {
       nodeIntegration: true
     },
     show: false
-  })
+  });
 //  mainWindow.setMenu(null);
   var menu = Menu.buildFromTemplate([
       {
@@ -55,18 +55,21 @@ function createWindow () {
             }
           ]
       }
-  ])
+  ]);
   Menu.setApplicationMenu(menu);
   // and load the index.html of the app.
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     mainWindow.maximize();
-  })
+  });
   mainWindow.loadFile('index.html');
 //  mainWindow.loadFile('splash.html');
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
+  globalShortcut.register('CommandOrControl+Shift+K', () => {
+    mainWindow.webContents.openDevTools();
+  });
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -76,11 +79,11 @@ function createWindow () {
     mainWindow = null
   })
 }
-
+//END creatWindow/////////////////////////////////////
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -97,6 +100,13 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
+})
+app.on('will-quit', () => {
+  // Unregister a shortcut.
+  //globalShortcut.unregister('CommandOrControl+X')
+
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll()
 })
 
 // In this file you can include the rest of your app's specific main process
