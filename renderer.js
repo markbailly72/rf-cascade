@@ -256,14 +256,6 @@ function alignCascade(numParts) {
     return error;
   }
   while (cascadeList.length != numParts-2) {
-    // for (let i=0;i<connectionList.length;i++) {
-    //     if(connectionList[i].split(",")[1] == nextPart) {
-    //       if (connectionList[i].split(",")[2] != 2) {
-    //         cascadeList.push(connectionList[i].split(",")[2]);
-    //         nextPart = connectionList[i].split(",")[2];
-    //       }
-    //     }
-    // }
     connectionList.forEach(function(cList) {
       if(cList.split(",")[1] == nextPart) {
         if (cList.split(",")[2] != 2) {
@@ -283,10 +275,6 @@ function checkInOut() {
     list.push(cList.split(",")[1]);
     list.push(cList.split(",")[2]);
   });
-  // for (let i=0;i<connectionList.length;i++) {
-  //   list.push(connectionList[i].split(",")[1]);
-  //   list.push(connectionList[i].split(",")[2]);
-  // }
   if (list.includes("1")) {
     isConnectedIn = true;
   }
@@ -312,16 +300,17 @@ function calcCascade(list) {
 	var IPa,ipn, gn, p1, P1a, Pina;
 	var device;
 	var NF, IP, P1, inP1, IIP3, Pin, pmax;
-  for (let i=0;i<list.length;i++) {
-    if(!app.view.getFigure(parseInt(list[i])).getUserData().disabled){
-      console.log(app.view.getFigure(parseInt(list[i])).getUserData());
-      Gdb = Gdb + parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().G);
-  		gn = Math.pow(10,parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().G)/10);
-  		ip = Math.pow(10,parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().IP3)/10);
-  		p1 = Math.pow(10,parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().P1db)/10);
-  		pmax = parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().Pmax);
+  rfhCascade.dataOutput =[];
+  list.forEach(function(l) {
+    if(!app.view.getFigure(parseInt(l)).getUserData().disabled){
+      console.log(app.view.getFigure(parseInt(l)).getUserData());
+      Gdb = Gdb + parseFloat(app.view.getFigure(parseInt(l)).getUserData().G);
+  		gn = Math.pow(10,parseFloat(app.view.getFigure(parseInt(l)).getUserData().G)/10);
+  		ip = Math.pow(10,parseFloat(app.view.getFigure(parseInt(l)).getUserData().IP3)/10);
+  		p1 = Math.pow(10,parseFloat(app.view.getFigure(parseInt(l)).getUserData().P1db)/10);
+  		pmax = parseFloat(app.view.getFigure(parseInt(l)).getUserData().Pmax);
   		if (first == 0) {
-  			NF = parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().NF);
+  			NF = parseFloat(app.view.getFigure(parseInt(l)).getUserData().NF);
   			F = Math.pow(10,NF/10);
   			first = 1;
   			Glin = Math.pow(10,Gdb/10);
@@ -330,8 +319,8 @@ function calcCascade(list) {
   			Pin = parseFloat(rfhCascade.Pin);
   		}
   		else {
-  			Fa = Math.pow(10,parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().NF)/10);
-        if(app.view.getFigure(parseInt(list[i])).getUserData().disabled){
+  			Fa = Math.pow(10,parseFloat(app.view.getFigure(parseInt(l)).getUserData().NF)/10);
+        if(app.view.getFigure(parseInt(l)).getUserData().disabled){
           Fa = 1;
         }
   			F = F + (Fa-1)/Gprev;
@@ -346,23 +335,14 @@ function calcCascade(list) {
   		NF = 10*Math.log(F)/Math.LN10;
   		IP = 10*Math.log(IPa)/Math.LN10;
   		P1 = 10*Math.log(P1a)/Math.LN10;
-  		inP1 = P1 - parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().G);
-  		inIP = IP - parseFloat(app.view.getFigure(parseInt(list[i])).getUserData().G);
-      partNames.push(app.view.getFigure(parseInt(list[i])).getChildren().data[0].text);
-  		partOP1db.push(P1);
-  		partIP1db.push(inP1);
-  		partOIP3.push(IP);
-  		partIIP3.push(inIP);
-  		partNF.push(NF);
-  		partX.push(xtick);
-      partPower.push(Pin);
+  		inP1 = P1 - parseFloat(app.view.getFigure(parseInt(l)).getUserData().G);
+  		inIP = IP - parseFloat(app.view.getFigure(parseInt(l)).getUserData().G);
+      rfhCascade.dataOutput.push({"name" : app.view.getFigure(parseInt(l)).getChildren().data[0].text,"op1db" : P1,"ip1db" : inP1,"nf" : NF,"oip3" : IP,"iip3" : inIP,"power": Pin});
     }
-  }
+  });
+
+
   partX.push(xtick);
-  rfhCascade.dataOutput =[];
-	for (var i=0; i < partNames.length;i++) {
-		rfhCascade.dataOutput.push({"name" : partNames[i],"op1db" : partOP1db[i],"ip1db" : partIP1db[i],"nf" : partNF[i],"oip3" : partOIP3[i],"iip3" : partIIP3[i],"power": partPower[i]});
-	}
   let results = "RESULTS \n Gain = "+Gdb.toFixed(2)+" dB \n NF = "+NF.toFixed(2)+" dB \n OP1dB = "+P1.toFixed(2)+" dB \n OIP3 = "+IP.toFixed(2)+" dB";
   app.view.getFigure(0).setText(results);
   rfhCascade.plotActive = true;
@@ -451,22 +431,16 @@ function plotData(action) {
   }
   var partX = [], partX2 = [];
 	var partNames = [], partData = [], partDataFreeze = [], xWidth, xTickSize;
-  rfhCascade.dataOutput.forEach(function(dataOuput) {
-    partNames.push(dataOutput.name);
-    partData.push(dataOutput[param]);
+  console.log(rfhCascade.dataOutput);
+  rfhCascade.dataOutput.forEach(function(dataOut) {
+    partNames.push(dataOut.name);
+    partData.push(dataOut[param]);
   });
-	// for (var i=0;i<rfhCascade.dataOutput.length;i++) {
-	// 	partNames.push(rfhCascade.dataOutput[i].name);
-	// }
-	// for (var i=0;i<rfhCascade.dataOutput.length;i++) {
-	// 	partData.push(rfhCascade.dataOutput[i][param]);
-	// }
-  partNames.foreach(function(partName) {
-    partX.push(j*100);
+  let j=0;
+  partNames.forEach(function(partName) {
+    j = j+100;
+    partX.push(j);
   });
-	// for (var j=0;j<partNames.length;j++) {
-	// 	partX.push(j*100);
-	// }
 	if (rfhCascade.plotFrozen) {
 		for (let i=0;i<rfhCascade.dataOutputFreeze.length;i++) {
 			partDataFreeze.push(rfhCascade.dataOutputFreeze[i][param]);
