@@ -38269,7 +38269,7 @@ _packages2.default.shape.analog.Amplifier = _packages2.default.SVGFigure.extend(
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20,20 l60,30 l-60,30 l0,-60 z" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 10,10 l30,15 l-30,15 l0,-30 z" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
@@ -38363,7 +38363,7 @@ _packages2.default.shape.analog.Attenuator = _packages2.default.SVGFigure.extend
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 10 50 l 10,0 l 10 -10 l 10 10 l 10,-10 l 10,10 l 10-10 l 10,10 l 10,0 M 45,60 L 55,30 l 5,5 M 55,30 l -8,4" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 5 25 l 5,0 l 5 -5 l 5 5 l 5,-5 l 5,5 l 5-5 l 5,5 l 5,0 M 22,30 L 27,15 l 2,2 M 27,15 l -4,2" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
@@ -38457,7 +38457,7 @@ _packages2.default.shape.analog.DirectionalCoupler = _packages2.default.SVGFigur
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20 20 l 25,0 l 0,60 l -25,0 M 80 20 l -25,0 l 0,60 l 25,0" stroke="black" fill="none" transform="rotate(90,50,50)" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 10 10 l 12,0 l 0,30 l -12,0 M 40 10 l -12,0 l 0,30 l 12,0" stroke="black" fill="none" transform="rotate(90,50,50)" />' + '</svg>';
   },
 
   /**
@@ -38551,7 +38551,7 @@ _packages2.default.shape.analog.Filter = _packages2.default.SVGFigure.extend({
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20 60 l 15,-30 l 30,0 l 15,30" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 10 30 l 7,-15 l 15,0 l 7,15" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
@@ -38645,7 +38645,7 @@ _packages2.default.shape.analog.GenericBlock = _packages2.default.SVGFigure.exte
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '</svg>';
   },
 
   /**
@@ -38739,7 +38739,7 @@ _packages2.default.shape.analog.HybridCoupler = _packages2.default.SVGFigure.ext
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20 20 l 25,0 l 10,60 l 25,0 M 80 20 l -25,0 l -10,60 l -25,0" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 10 10 l 12,0 l 5,30 l 12,0 M 40 10 l -12,0 l -5,30 l -12,0" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
@@ -38833,7 +38833,7 @@ _packages2.default.shape.analog.Mixer = _packages2.default.SVGFigure.extend({
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100"  height="100">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20,50 a30,30 0 1,1 60,0 a30,30 0 1,1 -60,0 z M 28,28 l 44,44 m -44,0 l 44,-44" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="50"  height="50">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 10,25 a15,15 0 1,1 30,0 a15,15 0 1,1 -30,0 z M 14,14 l 22,22 m -22,0 l 22,-22" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
@@ -38927,7 +38927,7 @@ _packages2.default.shape.analog.Spdt = _packages2.default.SVGFigure.extend({
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 20,50 l 20,0 l 20,-20 l 20,0 m -20,40 l 20,0" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 10,25 l 10,0 l 10,-10 l 10,0 m -10,20 l 10,0" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
@@ -39021,7 +39021,7 @@ _packages2.default.shape.analog.Splitter = _packages2.default.SVGFigure.extend({
    * @inheritdoc
    */
   getSVG: function getSVG() {
-    return '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" version="1.1">' + '<rect width="100" height="100" stroke="gray" fill="none"/>' + '<path d="M 10 50 l 30,0 l 30 -30 M 40 50 l 30,30" stroke="black" fill="none" />' + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" version="1.1">' + '<rect width="50" height="50" stroke="gray" fill="none"/>' + '<path d="M 5 25 l 15,0 l 15 -15 M 20 25 l 15,15" stroke="black" fill="none" />' + '</svg>';
   },
 
   /**
