@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
-    "electron": "^7.0.1",
+    "electron": "^13.6.6",
     "electron-builder": "^22.1.0"
   },
   "dependencies": {
